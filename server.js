@@ -17,10 +17,29 @@ devolva numeros aleatorios na seguinte lógica:
 Acesse a página /random e atualize-a para testar sua lógica
 */
 
+function gerarRandomInt() {
+  let ultimoNumero = 0;
+  let numeroAtual = 0;
+
+  return () => {
+    ultimoNumero = numeroAtual;
+    numeroAtual = Math.floor(Math.random() * 11);
+
+    return {
+      ultimoNumero: ultimoNumero,
+      numeroAtual: numeroAtual,
+    };
+  };
+}
+
+const gerador = gerarRandomInt();
+
 app.get("/random", (req, res) => {
+  const numerosNovos = gerador();
+
   res.render("random", {
-    /* --> */ ultimoNumero: 0,
-    numeroAtual: 0 /* <-- Valores aqui */,
+    /* --> */ ultimoNumero: numerosNovos.ultimoNumero,
+    numeroAtual: numerosNovos.numeroAtual /* <-- Valores aqui */,
   });
 });
 
@@ -36,9 +55,20 @@ app.get("/inverter", (req, res) => {
   res.render("inverter");
 });
 
+function inverterPalavra(palavra) {
+  if (palavra.length <= 1) {
+    return palavra;
+  }
+
+  return (
+    palavra[palavra.length - 1] +
+    inverterPalavra(palavra.substring(0, palavra.length - 1))
+  );
+}
+
 app.get("/api/inverter/:palavraParaInverter", (req, res) => {
   const palavraParaInverter = req.params.palavraParaInverter;
-  const invertida = "PALAVRA_INVERTIDA_AQUI";
+  const invertida = inverterPalavra(palavraParaInverter);
   res.json(invertida);
 });
 
@@ -52,6 +82,21 @@ Utilizando essas funções, pegaCorDeFundo retorna uma string no formato: rgb(n,
 No entanto, esse código está com erro, pois as funções anteriores não foram implementadas.
 Você deve então implementá-las para corrigir o programa, de modo /cores deve mostrar uma cor aleatória a cada acesso.
 */
+
+// Crie as funções abaixo
+
+function pegaVermelho() {
+  return Math.floor(Math.random() * 256);
+}
+
+function pegaVerde() {
+  return Math.floor(Math.random() * 256);
+}
+
+function pegaAzul() {
+  return Math.floor(Math.random() * 256);
+}
+
 function pegaCorDeFundo(pegaVermelho, pegaVerde, pegaAzul) {
   const r = pegaVermelho();
   const g = pegaVerde();
@@ -59,13 +104,11 @@ function pegaCorDeFundo(pegaVermelho, pegaVerde, pegaAzul) {
   return `rgb(${r}, ${g}, ${b})`;
 }
 
-// Crie as funções abaixo
-
 // Crie as funções acima
 
 app.get("/cores", (req, res) => {
   // Descomentar e corrigir aqui!
-  const corDeFundo = ""; //pegaCorDeFundo(pegaVermelho, ...;
+  const corDeFundo = pegaCorDeFundo(pegaVermelho, pegaVerde, pegaAzul);
   res.render("cores", { corDeFundo });
 });
 
@@ -82,9 +125,17 @@ que são os dobros de [5, 6, 7, 8, 9, 10]
 É OBRIGATÓRIO UTILIZAR A FUNÇÃO MAP
 */
 app.get("/dobros/:inicio/:fim", (req, res) => {
-  const inicio = req.params.inicio;
-  const fim = req.params.fim;
-  const dobros = []; // Dobros aqui;
+  const inicio = parseInt(req.params.inicio);
+  const fim = parseInt(req.params.fim);
+
+  let nums = [];
+
+  for (let i = Math.min(inicio, fim); i <= Math.max(inicio, fim); i++) {
+    nums.push(i);
+  }
+
+  const dobros = nums.map((n) => n * 2);
+
   res.render("dobros", { dobros: dobros.join(", ") });
 });
 
